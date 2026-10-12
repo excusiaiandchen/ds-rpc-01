@@ -12,3 +12,7 @@ wheels/
 *.lock
 resources/vectorstore
 .env
+.env.*
+!.env.example
+storage/
+.pytest_cache/
