@@ -2,6 +2,26 @@
 
 基于 Codebasics RPC-01 starter 的学习与开发项目，当前已跑通单轮文档问答：JWT 身份认证 → 按角色过滤检索范围 → Chroma 向量检索 → 通义千问生成回答 → 返回引用来源。项目持续开发中，并非生产环境安全认证方案。
 
+## 如何启动？
+
+- **1先做前置准备**
+- 打开 PowerShell，执行：
+- cd 'F:\.donwload20241017\DS-RPC-01\finsolve-rbac'
+- .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+- 然后在浏览器打开 http://127.0.0.1:8000/docs
+- **2登录**
+- 右上角的authorize，并填入账密(这在main.py中是有初始的几位角色的),到这里，已经返回令牌了
+- **3确认身份**
+- 从/me进入→ Try it out → Execute
+- **4提交问题**
+- /chat→Try it out
+- 其中，source_file可以指定资料来源，原本是string作为占位符，建议删除这行和上面的句号
+- 在question处编辑问题，点击execute即可执行
+- 下方可以看到回答、引用等详细信息
+
+
+
+
 ## 已实现功能
 
 - SQLite 用户存储、Argon2 密码哈希、短期 JWT 登录凭据，支持八个演示账号和六类角色。

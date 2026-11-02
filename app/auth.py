@@ -82,8 +82,8 @@ def login_for_token(
     # 令牌只包含用户编号和到期时间，不放密码或密码哈希
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=TOKEN_MINUTES)
     payload = {
-        "sub": str(user["user_id"]),
-        "exp": expires_at,
+        "sub": str(user["user_id"]),#这里提供用户编号
+        "exp": expires_at,#设定过期时间
     }
 
     access_token = jwt.encode(

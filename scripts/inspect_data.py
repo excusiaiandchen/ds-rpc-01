@@ -3,6 +3,8 @@ from pathlib import Path
 import pandas as pd
 
 
+
+#该文件用于初试查验各文件数量、文件大小
 # 根据本脚本的位置找到项目根目录
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "resources" / "challenge_data"

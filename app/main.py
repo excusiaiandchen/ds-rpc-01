@@ -80,12 +80,17 @@ app.include_router(auth_router)
 
 @app.get("/me")
 def me(user: dict = Depends(get_current_user)):
-    return user
+    return {
+        "message": "此处可以看到ID,角色，权限",
+        "message": "返回码200为正常，401为错误，先回到 Authorize 检查登录状态",
+        **user,
+    }
 
 
 @app.get("/test")
 def test(user: dict = Depends(get_current_user)):
     return {
+        "message": f"简单检查令牌认证是否成功，返回问候信息",
         "message": f"Hello {user['username']}! JWT 验证成功。",
         "role": user["app_role"],
     }
@@ -107,34 +112,35 @@ def files(user: dict = Depends(get_current_user)):
     visible_files = list_authorized_files(user["app_role"])
 
     return {
+        "message": f"列出当前用户有权限查看的文件",
         "username": user["username"],
         "app_role": user["app_role"],
         "file_count": len(visible_files),
         "files": visible_files,
     }
 
-@app.get("/documents/preview")
-def preview_documents(user: dict = Depends(get_current_user)):
-    documents = load_authorized_documents(user["app_role"])
-
-    # 预览只返回前三条的部分正文，避免页面被大量文本占满
-    samples = [
-        {
-            "document_id": doc["document_id"],
-            "title": doc["title"],
-            "headings": doc["headings"][:5],
-            "content_preview": doc["content"][:500],
-            "metadata": doc["metadata"],
-        }
-        for doc in documents[:3]
-    ]
-
-    return {
-        "username": user["username"],
-        "app_role": user["app_role"],
-        "document_count": len(documents),
-        "samples": samples,
-    }
+# @app.get("/documents/preview")
+# def preview_documents(user: dict = Depends(get_current_user)):
+#     documents = load_authorized_documents(user["app_role"])
+#
+#     # 预览只返回前三条的部分正文，避免页面被大量文本占满
+#     samples = [
+#         {
+#             "document_id": doc["document_id"],
+#             "title": doc["title"],
+#             "headings": doc["headings"][:5],
+#             "content_preview": doc["content"][:500],
+#             "metadata": doc["metadata"],
+#         }
+#         for doc in documents[:3]
+#     ]
+#
+#     return {
+#         "username": user["username"],
+#         "app_role": user["app_role"],
+#         "document_count": len(documents),
+#         "samples": samples,
+#     }
 
 
 @app.get("/chunks/preview")
@@ -150,6 +156,7 @@ def preview_chunks(
         raise HTTPException(status_code=503, detail=str(error)) from error
 
     return {
+        "message": f"预览切块结果，检查内容、来源和权限标签",
         "username": user["username"],
         "app_role": user["app_role"],
         "document_count": len(documents),
@@ -204,6 +211,8 @@ def search(
         ) from error
 
     response = {
+        "message": f"在本地授权范围内检索chunk，不调用回答模型",
+        "message": f"返回码200表示请求发送成功",
         "username": user["username"],
         "app_role": user["app_role"],
         "question": request.question.strip(),
@@ -337,9 +346,11 @@ def chat(
         ) from error
 
     return {
+        "message": "/chat会调用大模型、消耗token、生成回答，/search中只会检索本地文件",
         "username": user["username"],
         "app_role": user["app_role"],
         "question": request.question.strip(),
+        "message": "下面显示搜索结果：1状态：是否正常回答2回答本身以及引用3来源4大模型token使用量",
         "result": result,
     }
 
